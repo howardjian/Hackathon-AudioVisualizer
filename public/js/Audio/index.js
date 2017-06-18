@@ -27,6 +27,7 @@ catch(e) {
 
 let url = './Assets/sounds/cant-stop-the-feeling.ogg';
 
+
 let request = new XMLHttpRequest();
 // true is specified to indicate async processing
 request.open("GET", url, true );
