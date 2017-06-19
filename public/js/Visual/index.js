@@ -24,10 +24,10 @@ onKeyDown = (e) => {
         context.resume();
       }
       break;
-    case 49:
+    case 50:
       toggleShapes();
       break;
-    case 50:
+    case 49:
       cubes = [];
       scene = null;
       init();
@@ -114,8 +114,9 @@ let initCubes = () => {
   scene.add(directionalLight);
 
   for(let yCoords = 0; yCoords < 32; y += 4) {
-    let incrementing = yCoords < 16;
-    let y = yCoords;
+    for(let row = 0; row < 32; y +=4) {
+
+    }
   }
 
 }
