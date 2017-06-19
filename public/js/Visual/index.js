@@ -42,10 +42,12 @@ var geometry = new THREE.TetrahedronGeometry(1);
 // yCoords = 0,
 // radius = 0
 let toggleCam = () => {
-  camera.position.x = 0;
-  camera.position.y = 0;
-  camera.position.z = 0;
-  camera.getWorldPosition()
+  if(camera.position.z) {
+    camera.position.z = 0;
+    camera.getWorldPosition()
+  } else {
+    camera.position.z = 50;
+  }
 }
 
 
@@ -117,7 +119,8 @@ let initCubes = () => {
         cube.position.set(x, y, z);
         scene.add(cube);
         cubes.push(cube);
-        if(z !== 0 && z !== 28 && y !== 0 && y !== 28) {
+        // if(z !== 0 && z !== 28 && y !== 0 && y !== 28) {
+        if(z !== 0 && y !== 0) {
           x += 24
         }
       }
