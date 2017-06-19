@@ -25,7 +25,7 @@ catch(e) {
     alert("Web Audio API is not supported in this browser");
 }
 
-let url = './Assets/sounds/cant-stop-the-feeling.ogg';
+let url = './Assets/sounds/vivaLaVida.mp3';
 
 
 let request = new XMLHttpRequest();
