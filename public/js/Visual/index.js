@@ -1,4 +1,4 @@
-let scene, camera, renderer, camCount, cube;
+let scene, camera, renderer, camCount, cube, scaleFactor;
 let cubes =
 
 // Add Event Listeners to play and pause
@@ -23,6 +23,9 @@ onKeyDown = (e) => {
     case 51:
       toggleCam();
       break
+    case 52:
+      toggleColor();
+      break;
   }
 }
 
@@ -261,6 +264,12 @@ function generateRandomColor() {
   return color;
 }
 
+function toggleColor() {
+  cubes.forEach(cube => {
+    cube.material.color = new THREE.Color(generateRandomColor())
+  })
+}
+
 render = () => {
   requestAnimationFrame( render );
 
@@ -272,18 +281,24 @@ render = () => {
       i = 0
     };
 
+    if(cube.geometry.type === 'TetrahedronGeometry') {
+      scaleFactor = 80
+    } else {
+      scaleFactor = 50
+    }
+
     cube.scale.x = cubeAudioScale && (cube.userData.horizontal !== '=') ?
-    (cube.userData.horizontal === '+' ? (i/10 + cubeAudioScale / 75) :
-    -i/10 - cubeAudioScale/75) : .5
+    (cube.userData.horizontal === '+' ? (i/10 + cubeAudioScale / scaleFactor) :
+    -i/10 - cubeAudioScale / scaleFactor) : .5
 
     cube.scale.y = cubeAudioScale && (cube.userData.vertical !== '=') ?
-    (cube.userData.vertical === '+' ? (i/10 + cubeAudioScale / 75) :
-    -i/10 - cubeAudioScale/75) : .5
+    (cube.userData.vertical === '+' ? (i/10 + cubeAudioScale / scaleFactor) :
+    -i/10 - cubeAudioScale / scaleFactor) : .5
 
 
     cube.scale.z = cubeAudioScale && (cube.userData.zHalf !== '=') ?
-    (cube.userData.zHalf === '+' ? (i/10 + cubeAudioScale / 75) :
-    -i/10 - cubeAudioScale/75) : .5
+    (cube.userData.zHalf === '+' ? (i/10 + cubeAudioScale / scaleFactor) :
+    -i/10 - cubeAudioScale / scaleFactor) : .5
 
   })
   renderer.render( scene, camera );

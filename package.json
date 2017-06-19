@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.3",
+    "heroku-cli": "^6.11.10",
     "nodemon": "^1.11.0",
     "three": "^0.85.2"
   }
