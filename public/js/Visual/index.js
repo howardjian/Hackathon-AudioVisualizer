@@ -1,20 +1,7 @@
-// let scene = new THREE.Scene();
-//
-// let camera = new THREE.PerspectiveCamera(75, window.innerWidth/ window.innerHeight, .1, 1000);
-//
-// camera.position.x = 0;
-// camera.position.y = 0;
-// camera.position.z = 30;
-//
-//
-// let renderer = new THREE.WebGLRenderer();
-// renderer.setSize( window.innerWidth, window.innerHeight);
-// document.body.appendChild( renderer.domElement );
-
 let scene, camera, renderer, camCount, cube;
-let cubes = [];
-// Add Event Listeners to play and pause
+let cubes =
 
+// Add Event Listeners to play and pause
 onKeyDown = (e) => {
   switch(e.which) {
     case 32:
@@ -30,34 +17,17 @@ onKeyDown = (e) => {
     case 49:
       cubes = [];
       scene = null;
-      init();
+      initCubes();
       render();
+      break;
+    case 51:
+      toggleCam();
+      break
   }
 }
 
 document.addEventListener('keydown', onKeyDown, false);
 
-// LIGHT: without light, the metallic surface (phongmaterial) will not show
-
-// let lightA = new THREE.AmbientLight(0x505050);
-// scene.add(lightA);
-//
-// var directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-// directionalLight.position.set(0, 1, 0);
-// scene.add(directionalLight);
-//
-// directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-// directionalLight.position.set(1, 1, 0);
-// scene.add(directionalLight);
-//
-//
-// directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-// directionalLight.position.set(0, -1, -1);
-// scene.add(directionalLight);
-//
-// directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
-// directionalLight.position.set(-1, -1, 0);
-// scene.add(directionalLight);
 
 
 // CUBES RENDERING
@@ -68,6 +38,13 @@ var geometry = new THREE.TetrahedronGeometry(1);
 // increment = true,
 // yCoords = 0,
 // radius = 0
+let toggleCam = () => {
+  camera.position.x = 0;
+  camera.position.y = 0;
+  camera.position.z = 0;
+  camera.getWorldPosition()
+}
+
 
 let toggleShapes = () => {
   if(cubes[0].geometry.type === 'TetrahedronGeometry') {
@@ -77,7 +54,7 @@ let toggleShapes = () => {
     geometry = new THREE.CubeGeometry(1,1,1);
     cubes = [];
     scene = null;
-    init(geometry);
+    initCubes();
     render();
   } else {
     while(scene.children.length) {
@@ -98,7 +75,7 @@ let initCubes = () => {
 
   camera.position.x = 0;
   camera.position.y = 0;
-  camera.position.z = 30;
+  camera.position.z = 50;
 
   renderer = renderer || new THREE.WebGLRenderer();
   renderer.setSize( window.innerWidth, window.innerHeight);
@@ -113,17 +90,48 @@ let initCubes = () => {
   directionalLight.position.set(3, 1, 1);
   scene.add(directionalLight);
 
-  for(let yCoords = 0; yCoords < 32; y += 4) {
-    for(let row = 0; row < 32; y +=4) {
+  let lightA = new THREE.AmbientLight(0x2194ce);
+  scene.add(lightA);
 
+  let geometry = new THREE.CubeGeometry(1, 1, 1);
+
+  // slices of squares based on Y-axis
+  for(let y = 0; y < 32; y += 4) {
+    // rows of squares based on z-axis
+    for(let z = 0; z < 32; z += 4) {
+      // individual squares based on x-axis
+      for(let x = 0; x < 32; x += 4) {
+        let material =
+        new THREE.MeshPhongMaterial({
+          color: generateRandomColor(),
+          specular: 0x111111,
+          shading: THREE.SmoothShading,
+          shininess: 25,
+          reflectivity: 5.5,
+          wireframe: false
+        });
+        cube = new THREE.Mesh(geometry, material);
+        cube.position.set(x, y, z);
+        scene.add(cube);
+        cubes.push(cube);
+        if(z !== 0 && z !== 28 && y !== 0 && y !== 28) {
+          x += 24
+        }
+      }
     }
   }
+  cubes.forEach(cube => {
+    cube.translateX(-16);
+    cube.translateY(-16);
+    cube.translateZ(-16);
 
+  })
 }
 
 let init = (geo) => {
   geometry = geo || geometry
   scene = scene || new THREE.Scene();
+  // scene.background = new THREE.Color( 0xffffff )
 
   camera = camera ||  new THREE.PerspectiveCamera(75, window.innerWidth/ window.innerHeight, .1, 1000);
 
@@ -135,9 +143,7 @@ let init = (geo) => {
   renderer.setSize( window.innerWidth, window.innerHeight);
   document.body.appendChild( renderer.domElement );
 
-  // let lightA = new THREE.AmbientLight(0x505050);
-  // scene.add(lightA);
-
+  // LIGHT: without light, the metallic surface (phongmaterial) will not show
   if(geometry.type === 'TetrahedronGeometry'){
     let directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(0, 1, 0);
@@ -146,15 +152,21 @@ let init = (geo) => {
     directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
     directionalLight.position.set(-1, -1, 0);
     scene.add(directionalLight);
-  } else {
-    let directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(0, 0, -5);
-    scene.add(directionalLight);
 
-    directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
-    directionalLight.position.set(3, 1, 1);
-    scene.add(directionalLight);
-  }
+    var light = new THREE.AmbientLight(0x505050);
+    scene.add(light);
+  } // else {
+  //   let directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  //   directionalLight.position.set(0, 0, -5);
+  //   scene.add(directionalLight);
+  //
+  //   directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  //   directionalLight.position.set(1, 1, 1);
+  //   scene.add(directionalLight);
+  //
+  //   let lightA = new THREE.AmbientLight(0x2194ce);
+  //   scene.add(lightA);
+  // }
 
   for(let yCoords = 0; yCoords < 42; yCoords += 4){
     let incrementing = yCoords < 20;
@@ -170,16 +182,16 @@ let init = (geo) => {
     else if(y === 20) verticalHalf = '='
     else verticalHalf = '+';
 
-    // Each slice of the sphere (a circle whose variable points are on the X-axis and Z-axis) should contain 16 points, 1 for each major direction and 3 in each quandrant
+    // Each slice of the sphere (a circle whose variable points are on the X-axis and Z-axis) should contain variables points
 
     // There should also be a incrementing variable and a decrementing variable depending on the y value. Once we reach the halfway point, we want to make the radius decrease in size
 
     // To create each node, we start at 12 o'clock (the origin) and go counterclockwise
 
-    // Each node will be pi/8 rad apart, and the coordinates can be calculated as follows:
-
+    // Each node will be pi/(numCubes/2) rad apart, and the coordinates can be calculated as follows:
     // X coordinate: Sin(degrees) * radius
     // Z coordinate: Cos(degrees) * radius
+
     for(let currentCube = 0; currentCube < numCubes; currentCube++) {
       let x = radius * Math.sin(degree);
       let z = radius * Math.cos(degree);
@@ -262,20 +274,17 @@ render = () => {
 
     cube.scale.x = cubeAudioScale && (cube.userData.horizontal !== '=') ?
     (cube.userData.horizontal === '+' ? (i/10 + cubeAudioScale / 75) :
-    -i/10 - cubeAudioScale/75) : 1
+    -i/10 - cubeAudioScale/75) : .5
 
     cube.scale.y = cubeAudioScale && (cube.userData.vertical !== '=') ?
     (cube.userData.vertical === '+' ? (i/10 + cubeAudioScale / 75) :
-    -i/10 - cubeAudioScale/75) : 1
+    -i/10 - cubeAudioScale/75) : .5
+
 
     cube.scale.z = cubeAudioScale && (cube.userData.zHalf !== '=') ?
     (cube.userData.zHalf === '+' ? (i/10 + cubeAudioScale / 75) :
-    -i/10 - cubeAudioScale/75) : 1
-
-    cube.rotation.x = .02
-    cube.rotation.y = .02
+    -i/10 - cubeAudioScale/75) : .5
 
   })
-  // controls.update();
   renderer.render( scene, camera );
 }
